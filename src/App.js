@@ -1,15 +1,15 @@
 import { Route, BrowserRouter as Router, Routes, Redirect } from 'react-router-dom';
-import Data from './screens/Data';
+import Home from './screens/Home';
 
 import './App.css';
 
 function App() {
   return (
     <Router>
-      <div className='bg' style={{ backgroundColor: "#171721" }}>
+      <div className='bg' >
         <div className="container mt-5 pt-5 pb-5">
           <Routes>
-            <Route exact path="" element={<Data/>} />
+            <Route exact path="" element={<Home/>} />
           </Routes>
         </div>
       </div>
