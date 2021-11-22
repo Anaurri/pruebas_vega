@@ -72,10 +72,13 @@
       "encode": {
         "enter": {
           "fill": {
-            "value": "#dedede"
+            "value": "#FFCC99"
           },
           "stroke": {
-            "value": "white"
+            "value": "blue"
+          },
+          "strokeWidth": {
+            "value": 0.7
           }
         },
         "update": {
@@ -93,10 +96,10 @@
       "encode": {
         "enter": {
           "size": {
-            "value": 16
+            "value": 20
           },
           "fill": {
-            "value": "steelblue"
+            "value": "blue"
           },
           "fillOpacity": {
             "value": 0.8
