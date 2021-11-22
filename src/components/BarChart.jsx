@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import barChart from '../data/barChart.json';
+import barChart from '../vega/barChart.json';
 import { Vega } from 'react-vega';
 
 
