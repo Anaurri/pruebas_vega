@@ -12,7 +12,7 @@
   "data": [
     {
       "name": "states",
-      "url": "https://vega.github.io/vega/data/us-10m.json",
+      "url": "https://raw.githubusercontent.com/vega/vega/master/docs/data/us-10m.json",
       "format": {
         "type": "topojson",
         "feature": "states"
@@ -25,6 +25,31 @@
       ]
     },
     {
+      "name": "traffic",
+      "url": "https://vega.github.io/vega/data/flights-airport.csv",
+      "format": {
+        "type": "csv",
+        "parse": "auto"
+      },
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": [
+            "origin"
+          ],
+          "fields": [
+            "count"
+          ],
+          "ops": [
+            "sum"
+          ],
+          "as": [
+            "flights"
+          ]
+        }
+      ]
+    },
+    {
       "name": "airports",
       "url": "https://vega.github.io/vega/data/airports.csv",
       "format": {
@@ -32,6 +57,21 @@
         "parse": "auto"
       },
       "transform": [
+        {
+          "type": "lookup",
+          "from": "traffic",
+          "key": "origin",
+          "fields": [
+            "iata"
+          ],
+          "as": [
+            "traffic"
+          ]
+        },
+        {
+          "type": "filter",
+          "expr": "datum.traffic != null"
+        },
         {
           "type": "geopoint",
           "projection": "projection",
@@ -45,9 +85,42 @@
           "expr": "datum.x != null && datum.y != null"
         }
       ]
+    },
+    {
+      "name": "routes",
+      "url": "https://vega.github.io/vega/data/flights-airport.csv",
+      "format": {"type": "csv", "parse": "auto"},
+      "transform": [
+        {
+          "type": "lookup",
+          "from": "airports", "key": "iata",
+          "fields": ["origin", "destination"], "as": ["source", "target"]
+        },
+        {
+          "type": "filter",
+          "expr": "datum.source && datum.target"
+        },
+        {
+          "type": "linkpath",
+          "shape": "line"
+        }
+      ]
     }
   ],
-  "scales": [],
+  "scales": [
+    {
+      "name": "size",
+      "type": "linear",
+      "domain": {
+        "data": "traffic",
+        "field": "flights"
+      },
+      "range": [
+        16,
+        1000
+      ]
+    }
+  ],
   "projections": [
     {
       "name": "projection",
@@ -95,17 +168,16 @@
       },
       "encode": {
         "enter": {
-          "size": {
-            "value": 20
-          },
+          "size": {"scale": "size", "field": "traffic.flights"},
+
           "fill": {
             "value": "blue"
           },
           "fillOpacity": {
-            "value": 0.8
+            "value": 0.4
           },
           "stroke": {
-            "value": "white"
+            "value": "black"
           },
           "strokeWidth": {
             "value": 1.5
@@ -120,6 +192,49 @@
           }
         }
       }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "x": {"signal": "width", "offset": -5},
+          "y": {"value": 0},
+          "fill": {"value": "black"},
+          "fontSize": {"value": 20},
+          "align": {"value": "right"}
+        },
+        "update": {
+          "text": {"signal": "title"}
+        }
+      }
+    },
+    {
+      "type": "path",
+      "interactive": false,
+      "from": {"data": "routes"},
+      "encode": {
+        "enter": {
+          "path": {"field": "path"},
+          "stroke": {"value": "blue"},
+          "strokeOpacity": {"value": 0.15}
+        }
+      }
+    }
+  ],
+  "signals": [
+    {
+      "name": "hover",
+      "value": null,
+      "on": [
+        {"events": "symbol:mouseover", "update": "datum"},
+        {"events": "symbol:mouseout", "update": "null"}
+      ]
+    },
+    {
+      "name": "title",
+      "value": "U.S. Airports, 2008",
+      "update": "hover ? hover.name + ' (' + hover.iata + ')' : 'U.S. Airports, 2008'"
     }
   ]
 }
