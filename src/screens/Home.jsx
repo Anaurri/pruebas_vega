@@ -6,8 +6,8 @@ import AirportConnections from '../components/AirportConnections';
 function Home() {
     return(
         <Fragment>
-            <BarChart></BarChart>
-            <VariableBarChart></VariableBarChart>
+            {/* <BarChart></BarChart>
+            <VariableBarChart></VariableBarChart> */}
             <AirportConnections></AirportConnections>
         </Fragment>
     )
